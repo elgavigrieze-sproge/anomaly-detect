@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: anomaly-detect
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/anomalydetect
+    username: postgres
+    password: postgres
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+anomaly:
+  buffer:
+    capacity: 10000
+  detection:
+    z-score-threshold: 2.5
+    rolling-window-size: 100
+    baseline-recalculation-interval-seconds: 60
+    min-data-points: 30
+  tickers:
+    - AAPL
+    - GOOGL
+    - BTC/USD
+    - ETH/USD
+  ai:
+    provider: openai
+    timeout-seconds: 10
+  data-retention:
+    tick-data-days: 90
+  similarity:
+    min-cosine-similarity: 0.7
+    top-k: 3
+  market-data:
+    provider: alpaca
+    reconnect-initial-delay-ms: 1000
+    reconnect-max-delay-ms: 60000
+
+server:
+  port: 8080
