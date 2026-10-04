@@ -1,0 +1,45 @@
+# Local development profile - runs everything in-memory without Docker
+# Activate with: mvn spring-boot:run -Dspring.profiles.active=local
+
+spring:
+  # H2 in-memory database (replaces PostgreSQL)
+  r2dbc:
+    url: r2dbc:h2:mem:///anomalydb;DB_CLOSE_DELAY=-1
+    username: sa
+    password: 
+  
+  # H2 console for debugging (optional)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Redis - embedded server starts on 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Kafka - embedded broker starts on 9092  
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: anomaly-detector-local
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# Initialize H2 schema on startup
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-h2.sql
+
+logging:
+  level:
+    com.anomalydetect: DEBUG
+    org.springframework.kafka: INFO
+    # Reduce noise from embedded services
+    kafka: WARN
+    org.apache.kafka: WARN

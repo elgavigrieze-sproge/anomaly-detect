@@ -12,9 +12,26 @@ spring:
       host: localhost
       port: 6379
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: anomaly-detect
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.anomalydetect.model
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 anomaly:
   buffer:
     capacity: 10000
+  kafka:
+    topics:
+      ticks: stock-ticks
+      anomalies: anomalies
   detection:
     z-score-threshold: 2.5
     rolling-window-size: 100
@@ -26,8 +43,11 @@ anomaly:
     - BTC/USD
     - ETH/USD
   ai:
-    provider: openai
+    provider: cloudflare
     timeout-seconds: 10
+    cloudflare:
+      account-id: ${CLOUDFLARE_ACCOUNT_ID:}
+      api-token: ${CLOUDFLARE_API_TOKEN:}
   data-retention:
     tick-data-days: 90
   similarity:

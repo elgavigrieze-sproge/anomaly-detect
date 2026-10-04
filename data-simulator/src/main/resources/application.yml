@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: data-simulator
+  main:
+    web-application-type: none  # No web server needed for simulator
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+kafka:
+  topic:
+    ticks: stock-ticks
+
+# Finnhub real-time data (set enabled=true and provide your API key)
+finnhub:
+  enabled: false  # Set to true to use real market data
+  api-key: ${FINNHUB_API_KEY:your-api-key-here}
+  symbols: AAPL,GOOGL,MSFT,NVDA,AMZN,META,TSLA
+
+# Simulated data (used when finnhub.enabled=false)
+simulator:
+  enabled: true  # Fallback to simulated data when Finnhub is disabled
+  kafka:
+    topic: stock-ticks
+
+logging:
+  level:
+    com.anomalydetect.simulator: INFO

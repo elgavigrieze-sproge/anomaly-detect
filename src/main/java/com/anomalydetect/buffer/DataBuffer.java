@@ -2,6 +2,7 @@ package com.anomalydetect.buffer;
 
 import com.anomalydetect.config.AnomalyProperties;
 import com.anomalydetect.model.TickData;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,24 +15,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * When full, drops the oldest tick and logs a warning before enqueuing the new one.
  */
 @Component
+@RequiredArgsConstructor
 public class DataBuffer {
 
     private static final Logger log = LoggerFactory.getLogger(DataBuffer.class);
 
     private final LinkedBlockingQueue<TickData> queue;
-
-    public DataBuffer(AnomalyProperties properties) {
-        this(properties.getBuffer().getCapacity());
-    }
-
-    /**
-     * Creates a DataBuffer with the specified capacity.
-     *
-     * @param capacity maximum number of ticks the buffer can hold
-     */
-    public DataBuffer(int capacity) {
-        this.queue = new LinkedBlockingQueue<>(capacity);
-    }
 
     /**
      * Enqueues a tick. If the buffer is full, drops the oldest tick and re-offers.
